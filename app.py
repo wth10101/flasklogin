@@ -76,6 +76,30 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        
+        # 1. Hash the password before storing it
+        hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+        
+        # 2. Insert into the database
+        conn = get_db_connection()
+        try:
+            conn.execute('INSERT INTO users (username, password) VALUES (?, ?)', 
+                         (username, hashed_pw))
+            conn.commit()
+            conn.close()
+            # Redirect to login so they can sign in with their new account
+            return redirect(url_for('login'))
+        except sqlite3.IntegrityError:
+            conn.close()
+            return "Username already exists. Please choose another."
+
+    return render_template('register.html')
+
 if __name__ == '__main__':
     init_db()
     app.run(debug=True)
