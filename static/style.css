@@ -1,0 +1,47 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f2f5;
+    color: #333;
+    padding-top: 50px; /* Space from the top of the page */
+}
+
+.container {
+    background-color: #ffffff;
+    width: 350px;         /* Fixed width */
+    margin: 0 auto;       /* Centers the box horizontally */
+    padding: 20px;
+    border: 1px solid #cccccc;
+    border-radius: 8px;   /* Rounds the corners */
+    text-align: center;
+}
+
+h2 {
+    color: #2c3e50;
+}
+
+input {
+    width: 90%;           /* Leaves a little room for padding */
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #bdc3c7;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+.flash-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
+}
