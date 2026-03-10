@@ -8,12 +8,39 @@
     <div class="container">
         <h2>Please register to</h2>
         <h2>create an account</h2>
-    <form method="POST">
-        <input type="text" name="username" placeholder="Username" required><br>
-        <input type="password" name="password" placeholder="Password" required><br>
-        <button type="submit">Register</button>
-    </form>
-    <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+        <form method="POST" id="signupForm">
+            <input type="text" name="username" placeholder="Username" required><br>
+            <input type="password" id="password" name="password" placeholder="Password" required><br>
+            <input type="password" id="password2" name="password2" placeholder="Repeat Password" required><br>
+            <button type="submit">Register</button>
+            <span id="error-message" style="color: red;"></span>
+        </form>
+        <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
     </div>
+
+    <script>
+        const form = document.getElementById('signupForm');
+        const password = document.getElementById('password');
+        const password2 = document.getElementById('password2');
+        const errorDisplay = document.getElementById('error-message');
+
+        form.addEventListener('submit', function(event) {
+        // 1. Reset previous errors
+        errorDisplay.textContent = '';
+        let isValid = true;
+
+        // 2. Perform validation checks
+        if (password.value.trim() != password2.value.trim()) {
+            errorDisplay.textContent = 'Passwords should natch!';
+            isValid = false;
+        }
+
+        // 3. Prevent submission if validation fails
+        if (!isValid) {
+            event.preventDefault(); 
+            console.log("Form submission blocked due to errors.");
+        }
+        });
+    </script>
 </body>
 </html>

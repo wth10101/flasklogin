@@ -21,12 +21,13 @@ def init_db():
     conn.execute('''CREATE TABLE IF NOT EXISTS users 
                  (id INTEGER PRIMARY KEY, 
                  username TEXT UNIQUE, 
-                 password TEXT)''')
+                 password TEXT,
+                 level INTEGER)''')
     
     # Create a default user if they don't exist
     hashed_pw = bcrypt.hashpw('password123'.encode('utf-8'), bcrypt.gensalt())
     try:
-        conn.execute('INSERT INTO users (username, password) VALUES (?, ?)', ('admin', hashed_pw))
+        conn.execute('INSERT INTO users (username, password,level) VALUES (?, ?, ?)', ('admin', hashed_pw,0))
         conn.commit()
     except sqlite3.IntegrityError:
         pass # User already exists
@@ -34,9 +35,10 @@ def init_db():
 
 # --- User Class for Flask-Login ---
 class User(UserMixin):
-    def __init__(self, id, username):
+    def __init__(self, id, username,level):
         self.id = id
         self.username = username
+        self.level = level
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -44,7 +46,7 @@ def load_user(user_id):
     user_data = conn.execute('SELECT * FROM users WHERE id = ?', (user_id,)).fetchone()
     conn.close()
     if user_data:
-        return User(id=user_data['id'], username=user_data['username'])
+        return User(id=user_data['id'], username=user_data['username'], level = user_data['level'])
     return None
 
 # --- Routes ---
@@ -60,8 +62,8 @@ def login():
         conn.close()
 
         if user_row and bcrypt.checkpw(password.encode('utf-8'), user_row['password'], ):
-            user_obj = User(id=user_row['id'], username=user_row['username'])
-            login_user(user_obj)
+            user_obj = User(id=user_row['id'], username=user_row['username'], level=user_row['level'])
+            login_user(user_obj)                  # will log the user in on the login manger
             return redirect(url_for('dashboard')) # current_user accesible in template
         
     return render_template('login.html')
@@ -89,8 +91,8 @@ def register():
         # 2. Insert into the database
         conn = get_db_connection()
         try:
-            conn.execute('INSERT INTO users (username, password) VALUES (?, ?)', 
-                         (username, hashed_pw))
+            conn.execute('INSERT INTO users (username, password, level) VALUES (?, ?, ?)', 
+                         (username, hashed_pw, 1)) # default new user to level 1
             conn.commit()
             conn.close()
             # Redirect to login so they can sign in with their new account

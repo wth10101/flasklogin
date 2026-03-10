@@ -8,6 +8,7 @@
     <div class="container">
         <h2>User Dashboard</h2>
         <p>Logged in as: <strong>{{ current_user.username }}</strong></p>
+        <p>Level: <strong>{{ current_user.level }}</strong></p>
         <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
         <a href="{{ url_for('logout') }}">Logout</a>
     </div>
