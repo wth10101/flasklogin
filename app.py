@@ -49,6 +49,7 @@ def load_user(user_id):
 
 # --- Routes ---
 @app.route('/login', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form.get('username')
