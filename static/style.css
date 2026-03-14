@@ -45,3 +45,26 @@ button:hover {
     font-size: 14px;
     margin-top: 10px;
 }
+
+.question { margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid #eee; }
+.question p { font-size: 1.2rem; font-weight: bold; }
+input[type="number"] { padding: 8px; width: 80px; border: 1px solid #ccc; border-radius: 4px; }
+
+#results { margin-top: 20px; font-weight: bold; font-size: 1.2rem; text-align: center; }
+.correct { color: green; }
+.incorrect { color: red; margin-left: 10px; }
+
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+th {
+  background-color:#2980b9;
+  color:white;
+}
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}

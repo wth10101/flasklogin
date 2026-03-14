@@ -6,9 +6,16 @@
 </head>
 <body>
     <div class="container">
-        <h2>User Dashboard</h2>
-        <p>Logged in as: <strong>{{ current_user.username }}</strong></p>
-        <p>Level: <strong>{{ current_user.level }}</strong></p>
+        <h2>Admin Dashboard</h2>
+        <table>
+            <th>User</th><th>Level</th>
+            {%for user in users%}
+            <tr>
+                <td>{{user['username']}}</td>
+                <td>{{user['level']}}</td>
+            </tr>
+            {%endfor%}
+        </table>
         <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
         <a href="{{ url_for('logout') }}">Logout</a>
     </div>

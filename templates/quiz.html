@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title> Math Quiz</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container">
+    <h2>Math Quiz</h2>
+    <p>Welcome <strong>{{ current_user.username }}</strong>
+    you are at level: <strong>{{ current_user.level }}</strong></p>
+    
+    <div id="quiz-form"></div>
+    <button id="submit-btn" onclick="checkAnswers()">Submit Answers</button>
+    <div id="results"></div>
+    <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+        <a href="{{ url_for('logout') }}">Logout</a>
+</div>
+{% block javascript %}
+<script>
+    const quizForm = document.getElementById('quiz-form');
+    const questions = [];
+    const numQuestions = 3;
+
+    // Generate random questions
+    for (let i = 0; i < numQuestions; i++) {
+        const operators = ['+', '-', '*'];
+        const op = operators[Math.floor(Math.random() * operators.length)];
+        let num1 = Math.floor(Math.random() * 12 * {{current_user.level}}) + 1;
+        let num2 = Math.floor(Math.random() * 12 * {{current_user.level}}) + 1;
+
+        // Ensure subtraction doesn't result in negative numbers for simplicity
+        if (op === '-' && num1 < num2) [num1, num2] = [num2, num1];
+
+        const questionText = `${num1} ${op} ${num2}`;
+        const answer = eval(questionText);
+
+        questions.push({ questionText, answer });
+
+        // Add to DOM
+        const qDiv = document.createElement('div');
+        qDiv.className = 'question';
+        qDiv.innerHTML = `
+            <p>${i + 1}. What is ${questionText}?
+            <input type="number" id="ans-${i}" placeholder="?">
+            <span id="feedback-${i}"></span></p>
+        `;
+        quizForm.appendChild(qDiv);
+    }
+
+    function checkAnswers() {
+        let score = 0;
+        questions.forEach((q, i) => {
+            const userAns = document.getElementById(`ans-${i}`).value;
+            const feedback = document.getElementById(`feedback-${i}`);
+            
+            if (parseInt(userAns) === q.answer) {
+                score++;
+                feedback.innerHTML = " ✓";
+                feedback.className = "correct";
+            } else {
+                feedback.innerHTML = " ✗" ;
+                feedback.className = "incorrect";
+            }
+        });
+
+        const resultDiv = document.getElementById('results');
+        resultDiv.innerHTML = `You scored ${score} out of ${numQuestions}!`;
+        
+        // Change button based on score
+        const btn = document.getElementById('submit-btn');
+
+        if (score == numQuestions){
+            btn.innerText = "Level Up!!";
+            btn.onclick = () => location = '/levelup';
+        }else{
+            btn.innerText = "Restart Quiz";
+            btn.onclick = () => location = '/quiz';
+        }
+    }
+</script>
+{% endblock %}
+</body>
+</html>

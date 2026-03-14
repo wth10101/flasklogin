@@ -64,14 +64,21 @@ def login():
         if user_row and bcrypt.checkpw(password.encode('utf-8'), user_row['password'], ):
             user_obj = User(id=user_row['id'], username=user_row['username'], level=user_row['level'])
             login_user(user_obj)                  # will log the user in on the login manger
-            return redirect(url_for('dashboard')) # current_user accesible in template
+            if current_user.level == 0:
+                return redirect(url_for('dashboard'))
+            else:
+                return redirect(url_for('quiz')) # current_user accesible in template
         
     return render_template('login.html')
 
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template('dashboard.html')
+    conn = get_db_connection()
+    user_data = conn.execute('SELECT username, level FROM users').fetchall()
+    print(user_data)
+    conn.close()
+    return render_template('dashboard.html', users=user_data)
 
 @app.route('/logout')
 @login_required
@@ -102,6 +109,21 @@ def register():
             return "Username already exists. Please choose another."
 
     return render_template('register.html')
+
+@app.route('/quiz')
+@login_required
+def quiz():
+    return render_template('quiz.html')
+
+@app.route('/levelup')
+@login_required
+def levelup():
+    current_user.level += 1
+    conn = get_db_connection()
+    conn.execute("UPDATE users SET level = ? WHERE id = ?", (current_user.level, current_user.id))
+    conn.commit()
+    conn.close()
+    return render_template('quiz.html')
 
 if __name__ == '__main__':
     init_db()
