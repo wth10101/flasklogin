@@ -2,9 +2,10 @@ import sqlite3
 from flask import Flask, render_template, redirect, url_for, request
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 import bcrypt
+import os
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your-very-secret-key' # for teaching, should not be stored here
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'a-default-fallback-key-for-development')
 
 login_manager = LoginManager(app)  # creates an object that hndles the flask login features
 login_manager.login_view = 'login' # giving us access to the login manager decorator
@@ -75,10 +76,21 @@ def login():
 @login_required
 def dashboard():
     conn = get_db_connection()
-    user_data = conn.execute('SELECT username, level FROM users').fetchall()
+    user_data = conn.execute('SELECT id, username, level FROM users').fetchall()
     print(user_data)
     conn.close()
     return render_template('dashboard.html', users=user_data)
+
+@app.route('/delete_user/<int:user_id>', methods=['POST'])
+@login_required
+def delete_user(user_id):
+    # Ensure only admins (level 0) can delete users
+    if current_user.level == 0:
+        conn = get_db_connection()
+        conn.execute('DELETE FROM users WHERE id = ?', (user_id,))
+        conn.commit()
+        conn.close()
+    return redirect(url_for('dashboard'))
 
 @app.route('/logout')
 @login_required

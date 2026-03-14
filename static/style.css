@@ -40,6 +40,22 @@ button:hover {
     background-color: #2980b9;
 }
 
+.btn-delete {
+    background-color: white; /* A standard red for delete actions */
+    border: none;
+    color:#333;
+    cursor: pointer;
+    padding: 5px 10px;
+    width: auto;
+    font-size: 16px;
+    line-height: 1;
+    border-radius: 4px;
+}
+
+.btn-delete:hover {
+    background-color: white; /* A darker red on hover */
+}
+
 .flash-message {
     color: red;
     font-size: 14px;
