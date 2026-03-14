@@ -77,7 +77,6 @@ def login():
 def dashboard():
     conn = get_db_connection()
     user_data = conn.execute('SELECT id, username, level FROM users').fetchall()
-    print(user_data)
     conn.close()
     return render_template('dashboard.html', users=user_data)
 
